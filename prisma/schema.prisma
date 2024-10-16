@@ -18,3 +18,11 @@ model User {
   userName String? 
   
 }
+
+model Tokens {
+  id String @id @default(uuid())
+  jwt String
+  userId String
+  createData DateTime
+  ext DateTime
+}
