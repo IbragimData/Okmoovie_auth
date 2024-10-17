@@ -4,6 +4,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { loginDto, signupDto } from './dto';
 import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
 import { compareSync } from 'bcrypt';
+import { addMonths } from 'date-fns';
 
 @Injectable()
 export class AuthService {
