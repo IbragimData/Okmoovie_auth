@@ -14,9 +14,9 @@ datasource db {
 }
 
 model Token {
-  id String @id @default(uuid())
-  jwt String
+  jwt String @id @unique
   userId String
   createData DateTime
   exp DateTime
+  userAgent String
 }

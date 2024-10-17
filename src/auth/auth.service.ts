@@ -1,5 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { BadRequestException, HttpException, Injectable } from '@nestjs/common';
+import {Request} from "express"
 import { PrismaService } from 'src/prisma/prisma.service';
 import { loginDto, signupDto } from './dto';
 import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
@@ -29,25 +30,32 @@ export class AuthService {
         }   
     }  
 
-    async login(dto:loginDto){
+    async login(dto:loginDto, userAgent: string, response: Request){
         try{
             const res = await this.httpService.get("http://localhost:5002/api/user/" + dto.mail).toPromise()
             if(!res.data){
                 throw new BadRequestException()
             }
+            const user = res.data
             const validPassword = compareSync(dto.password, res.data.password)
             if(!validPassword){
                 throw  new BadRequestException()
             }
-            const jwtToken = await this.getJwtToken(res.data.id)
-            const token = await this.prismaService.token.create({
-                data: {
-                    jwt: jwtToken,
-                    createData: new Date(),
-                    exp: addMonths(new Date(), 1),
-                    userId: res.data.id
+            
+            const _token = await this.prismaService.token.findFirst({
+                where: {
+                    userId: user.id,
+                    userAgent: userAgent
                 }
-            })
+            }) 
+
+            if(_token){            
+                const token = await this.getToken(user.id, userAgent, _token.jwt)
+                return token
+            }
+
+            const token = await this.getToken(user.id, userAgent, "")
+            
             return token
         }catch(e){
             console.log(e)
@@ -56,6 +64,31 @@ export class AuthService {
             }
             throw new HttpException("server error auth", 500)
         }
+    }
+
+    private async getToken(id:string, userAgent:string, token:string){
+        const jwtToken = await this.getJwtToken(id)
+        
+        const _token = await this.prismaService.token.upsert({
+            where: {
+                jwt: token,
+                userAgent: userAgent,
+                userId: id
+            },
+            update: {
+                jwt: jwtToken,
+                createData: new Date(),
+                exp: addMonths(new Date(), 1),
+            },
+            create: {
+                jwt: jwtToken,
+                createData: new Date(),
+                exp: addMonths(new Date(), 1),
+                userId: id,
+                userAgent
+            }
+        })
+        return _token
     }
 
     private async getJwtToken(id:string){

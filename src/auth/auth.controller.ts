@@ -13,9 +13,10 @@ export class AuthController {
         return this.authService.signup(dto)
     }    
     @Post("login")
-    async login(@Body() dto:signupDto, @Res() res:Response){
-        const token = await this.authService.login(dto)
+    async login(@Body() dto:signupDto, @Res() res:Response, @Req() req:Request){
+        const userAgent = req.headers['user-agent']
+        const token = await this.authService.login(dto, userAgent, req)
         res.cookie("token", token.jwt, {httpOnly:true})
         res.send(token)
-    }   
+    }
 }
