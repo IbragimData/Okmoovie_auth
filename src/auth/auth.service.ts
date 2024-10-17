@@ -30,7 +30,7 @@ export class AuthService {
         }   
     }  
 
-    async login(dto:loginDto, userAgent: string, response: Request){
+    async login(dto:loginDto, userAgent: string){
         try{
             const res = await this.httpService.get("http://localhost:5002/api/user/" + dto.mail).toPromise()
             if(!res.data){
@@ -55,7 +55,7 @@ export class AuthService {
             }
 
             const token = await this.getToken(user.id, userAgent, "")
-            
+
             return token
         }catch(e){
             console.log(e)
