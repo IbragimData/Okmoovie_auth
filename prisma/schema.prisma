@@ -13,10 +13,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id       Int    @id @default(autoincrement())
+  main     String
+  password String
+}
+
 model Token {
-  jwt String @id @unique
-  userId String
+  jwt        String   @id @unique
+  userId     String
   createData DateTime
-  exp DateTime
-  userAgent String
+  exp        DateTime
+  userAgent  String
 }

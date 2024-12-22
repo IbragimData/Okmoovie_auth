@@ -6,12 +6,18 @@ import { HttpModule } from '@nestjs/axios';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
 import { options } from './config';
+import { JwtStrategy } from './stratages/jwt.strategy';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @Module({
-  imports: [HttpModule, ConfigModule.forRoot({
-    isGlobal: true
-  }), JwtModule.registerAsync(options())],
-  providers: [AuthService, PrismaService],
-  controllers: [AuthController]
+  imports: [
+    HttpModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    JwtModule.registerAsync(options()),
+  ],
+  providers: [AuthService, PrismaService, JwtStrategy, JwtAuthGuard],
+  controllers: [AuthController],
 })
 export class AuthModule {}
