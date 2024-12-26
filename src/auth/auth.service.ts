@@ -20,7 +20,7 @@ export class AuthService {
   async signup(dto: signupDto) {
     try {
       const res = await this.httpService
-        .post('http://80.90.184.89:5002/api/user/', { ...dto })
+        .post('http://90.156.225.139:5002/api/user/', { ...dto })
         .toPromise();
       return res.data;
     } catch (e) {
@@ -38,7 +38,7 @@ export class AuthService {
   async login(dto: loginDto, userAgent: string) {
     try {
       const res = await this.httpService
-        .get('http://80.90.184.89:5002/api/user/' + dto.mail)
+        .get('http://90.156.225.139:5002/api/user/' + dto.mail)
         .toPromise();
       if (!res.data) {
         throw new BadRequestException();

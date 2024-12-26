@@ -16,10 +16,10 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  //@Post('signup')
-  //signup(@Body() dto: signupDto) {
-  //  return this.authService.signup(dto);
-  //}
+  @Post('signup')
+  signup(@Body() dto: signupDto) {
+    return this.authService.signup(dto);
+  }
   @Post('login')
   async login(
     @Body() dto: signupDto,
